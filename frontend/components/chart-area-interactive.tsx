@@ -23,23 +23,23 @@ import { type TrendPoint } from "@/src/flood-data";
 
 const chartPalettes = {
   GREEN: {
-    water: "var(--chart-1)",
-    rain: "var(--chart-4)",
+    water: "var(--color-flood-safe)",
+    rain: "var(--color-chart-4)",
   },
   YELLOW: {
-    water: "var(--chart-2)",
-    rain: "var(--chart-4)",
+    water: "var(--color-flood-watch)",
+    rain: "var(--color-chart-4)",
   },
   RED: {
-    water: "var(--chart-3)",
-    rain: "var(--chart-2)",
+    water: "var(--color-flood-danger)",
+    rain: "var(--color-chart-4)",
   },
 } as const;
 
 const chartConfig = {
-  waterLevelCm: { label: "Water Level", color: "var(--chart-1)" },
-  rainfallMm: { label: "Rainfall", color: "var(--chart-4)" },
-  prob3h: { label: "3h Risk", color: "var(--destructive)" },
+  waterLevelCm: { label: "Water Level", color: "var(--color-flood-safe)" },
+  rainfallMm: { label: "Rainfall", color: "var(--color-chart-4)" },
+  prob3h: { label: "3h Risk", color: "var(--color-flood-danger)" },
 } satisfies ChartConfig;
 
 type ChartAreaInteractiveProps = {
