@@ -1,0 +1,30 @@
+{
+  "feature_cols": [
+    "water_level_cm",
+    "rainfall_mm",
+    "rainfall_1h",
+    "rainfall_3h",
+    "rainfall_6h",
+    "rainfall_24h",
+    "level_rate_of_change",
+    "hour_of_day",
+    "day_of_year",
+    "antecedent_soil_moisture",
+    "level_2h_ago",
+    "level_6h_ago",
+    "level_accel",
+    "rain_intensity_6h",
+    "hour_sin",
+    "hour_cos",
+    "doy_sin",
+    "doy_cos",
+    "rain_x_rising"
+  ],
+  "target_cols": [
+    "flood_alert_1h",
+    "flood_alert_3h",
+    "flood_alert_6h"
+  ],
+  "flood_threshold_cm": 400.0,
+  "decision_threshold": 0.4
+}
