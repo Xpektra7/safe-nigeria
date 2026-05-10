@@ -118,9 +118,24 @@ export function DataTable({ data }: { data: FloodIncident[] }) {
     state: { sorting, globalFilter },
     onSortingChange: setSorting,
     onGlobalFilterChange: setGlobalFilter,
-    globalFilterFn: (row, columnId, filterValue) => {
-      const raw = String(row.getValue(columnId)).toLowerCase();
-      return raw.includes(String(filterValue).toLowerCase());
+    globalFilterFn: (row, _columnId, filterValue) => {
+      const query = String(filterValue).toLowerCase();
+      const incident = row.original;
+
+      const haystack = [
+        new Date(incident.timestamp).toLocaleString(),
+        incident.station,
+        incident.alertLevel,
+        incident.waterLevelCm.toString(),
+        incident.rainfallMm.toFixed(1),
+        Math.round(incident.prob1h * 100).toString(),
+        Math.round(incident.prob3h * 100).toString(),
+        Math.round(incident.prob6h * 100).toString(),
+      ]
+        .join(" ")
+        .toLowerCase();
+
+      return haystack.includes(query);
     },
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),

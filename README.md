@@ -88,6 +88,15 @@ main.py
 uvicorn main:app --host 0.0.0.0 --port 8000
 ```
 
+### Deploy with Docker
+
+```bash
+docker build -t floodsense-api .
+docker run --rm -p 8000:8000 --env-file .env floodsense-api
+```
+
+For deployment, set the same env vars in your hosting platform instead of using a local `.env` file.
+
 ### Environment Variables
 
 If you want `/history` and `/ingest` to use Postgres, set:
@@ -252,3 +261,12 @@ Pull requests are welcome. For major changes, please open an issue first.
 2. Add a real dashboard or frontend for the alert view and history.
 3. Add tests for the API and prediction logic.
 4. Add deployment packaging, config, and environment setup.
+
+## Backend Deployment Checklist
+
+1. Create the Supabase project.
+2. Run `schema.sql` in Supabase SQL editor.
+3. Copy the Postgres connection string.
+4. Set backend env vars on your host.
+5. Deploy the Docker image.
+6. Set `VITE_API_BASE_URL` in the frontend to the deployed API URL.

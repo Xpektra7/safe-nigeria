@@ -14,9 +14,9 @@ type SectionCardsProps = {
   statusLabel: string;
 };
 
-const statusTone: Record<AlertLevel, "secondary" | "destructive"> = {
-  GREEN: "secondary",
-  YELLOW: "secondary",
+const statusTone: Record<AlertLevel, "outline" | "warning" | "destructive"> = {
+  GREEN: "outline",
+  YELLOW: "warning",
   RED: "destructive",
 };
 
@@ -33,19 +33,39 @@ export function SectionCards({
       <Card>
         <CardHeader>
           <CardDescription>Alert Level</CardDescription>
-          <CardTitle className="text-3xl font-semibold tabular-nums">{alertLevel}</CardTitle>
+          <CardTitle
+            className={`text-3xl font-semibold tabular-nums ${
+              alertLevel === "RED"
+                ? "text-destructive"
+                : alertLevel === "YELLOW"
+                  ? "text-warning"
+                  : "text-[color:var(--chart-1)]"
+            }`}
+          >
+            {alertLevel}
+          </CardTitle>
           <CardAction>
-            <Badge variant={statusTone[alertLevel]}>
-              {statusLabel}
-            </Badge>
+            <Badge variant={statusTone[alertLevel]}>{statusLabel}</Badge>
           </CardAction>
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="flex gap-2 font-medium text-foreground">
+          <div
+            className={`flex gap-2 font-medium ${
+              alertLevel === "RED"
+                ? "text-destructive"
+                : alertLevel === "YELLOW"
+                  ? "text-warning"
+                  : "text-[color:var(--chart-1)]"
+            }`}
+          >
             <HugeiconsIcon icon={Alert02Icon} strokeWidth={2} className="size-4" />
-            {station}
+            {alertLevel === "RED"
+              ? "Flood alert active"
+              : alertLevel === "YELLOW"
+                ? "Watch conditions"
+                : "Normal conditions"}
           </div>
-          <div className="text-muted-foreground">Latest monitored station</div>
+          <div className="text-muted-foreground">{station} monitoring point</div>
         </CardFooter>
       </Card>
 
@@ -58,11 +78,17 @@ export function SectionCards({
           </CardAction>
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="flex gap-2 font-medium text-foreground">
+          <div
+            className={`flex gap-2 font-medium ${
+              waterLevelCm >= 400
+                ? "text-destructive"
+                : "text-[color:var(--chart-1)]"
+            }`}
+          >
             <HugeiconsIcon icon={Database01Icon} strokeWidth={2} className="size-4" />
             {waterLevelCm >= 400 ? "Above flood line" : "Below flood line"}
           </div>
-          <div className="text-muted-foreground">Current gauge reading</div>
+          <div className="text-muted-foreground">Current river gauge reading</div>
         </CardFooter>
       </Card>
 
@@ -75,11 +101,17 @@ export function SectionCards({
           </CardAction>
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="flex gap-2 font-medium text-foreground">
+          <div
+            className={`flex gap-2 font-medium ${
+              rainfallMm >= 40
+                ? "text-warning"
+                : "text-[color:var(--chart-2)]"
+            }`}
+          >
             <HugeiconsIcon icon={ChartUpIcon} strokeWidth={2} className="size-4" />
-            Intensifying rainfall
+            {rainfallMm >= 40 ? "Heavy rainfall" : "Rainfall building"}
           </div>
-          <div className="text-muted-foreground">Associated with rising alert pressure</div>
+          <div className="text-muted-foreground">Rainfall linked to rising flood pressure</div>
         </CardFooter>
       </Card>
 
@@ -92,11 +124,19 @@ export function SectionCards({
           </CardAction>
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="flex gap-2 font-medium text-foreground">
+          <div
+            className={`flex gap-2 font-medium ${
+              prob3h >= 0.7
+                ? "text-destructive"
+                : prob3h >= 0.4
+                  ? "text-warning"
+                  : "text-[color:var(--chart-2)]"
+            }`}
+          >
             <HugeiconsIcon icon={ChartHistogramIcon} strokeWidth={2} className="size-4" />
-            Short-term warning horizon
+            {prob3h >= 0.7 ? "High risk" : prob3h >= 0.4 ? "Watch risk" : "Low risk"}
           </div>
-          <div className="text-muted-foreground">Probability from the backend model</div>
+          <div className="text-muted-foreground">3-hour flood probability from the model</div>
         </CardFooter>
       </Card>
     </div>

@@ -7,11 +7,16 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 import { type FloodIncident, type TrendPoint } from "./flood-data";
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000";
+const API_BASE =
+  import.meta.env.VITE_API_BASE_URL ??
+  "https://safe-nigeria-production.up.railway.app";
 
 export default function App() {
   const [history, setHistory] = React.useState<FloodIncident[]>([]);
   const [trendData, setTrendData] = React.useState<TrendPoint[]>([]);
+  const [status, setStatus] = React.useState<"loading" | "ready" | "error">(
+    "loading",
+  );
 
   React.useEffect(() => {
     const controller = new AbortController();
@@ -24,23 +29,27 @@ export default function App() {
 
         if (!response.ok) return;
 
-        const data = (await response.json()) as FloodIncident[];
-        setHistory(data);
+          const data = (await response.json()) as FloodIncident[];
+          setHistory(data);
         setTrendData(
           data.map((row) => ({
-            time: new Date(row.timestamp).toLocaleTimeString([], {
+            time: new Date(row.timestamp).toLocaleString([], {
+              month: "short",
+              day: "2-digit",
               hour: "2-digit",
               minute: "2-digit",
             }),
             waterLevelCm: row.waterLevelCm,
             rainfallMm: row.rainfallMm,
+            alertLevel: row.alertLevel,
             prob1h: row.prob1h * 100,
             prob3h: row.prob3h * 100,
             prob6h: row.prob6h * 100,
           })),
         );
+        setStatus("ready");
       } catch {
-        // Keep the dashboard empty if the backend is unavailable.
+        setStatus("error");
       }
     }
 
@@ -68,6 +77,15 @@ export default function App() {
           <div className="flex flex-1 flex-col ">
             <div className="@container/main flex flex-1 flex-col gap-2">
               <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+                {status !== "ready" ? (
+                  <div className="px-4 lg:px-6">
+                    <div className="rounded-2xl border border-border bg-card px-4 py-3 text-sm text-muted-foreground">
+                      {status === "loading"
+                        ? "Loading live flood history from Railway..."
+                        : "Could not load live history. Check the API URL and database connection."}
+                    </div>
+                  </div>
+                ) : null}
                 {latestIncident ? (
                   <SectionCards
                     alertLevel={latestIncident.alertLevel}

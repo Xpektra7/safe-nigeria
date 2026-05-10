@@ -21,15 +21,34 @@ import {
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { type TrendPoint } from "@/src/flood-data";
 
+const chartPalettes = {
+  GREEN: {
+    water: "var(--chart-1)",
+    rain: "var(--chart-4)",
+  },
+  YELLOW: {
+    water: "var(--chart-2)",
+    rain: "var(--chart-4)",
+  },
+  RED: {
+    water: "var(--chart-3)",
+    rain: "var(--chart-2)",
+  },
+} as const;
+
 const chartConfig = {
   waterLevelCm: { label: "Water Level", color: "var(--chart-1)" },
-  rainfallMm: { label: "Rainfall", color: "var(--chart-2)" },
-  prob3h: { label: "3h Risk", color: "var(--chart-3)" },
+  rainfallMm: { label: "Rainfall", color: "var(--chart-4)" },
+  prob3h: { label: "3h Risk", color: "var(--destructive)" },
 } satisfies ChartConfig;
 
 type ChartAreaInteractiveProps = {
   data: TrendPoint[];
 };
+
+function getPalette(alertLevel: TrendPoint["alertLevel"]) {
+  return chartPalettes[alertLevel] ?? chartPalettes.GREEN;
+}
 
 export function ChartAreaInteractive({ data }: ChartAreaInteractiveProps) {
   const isMobile = useIsMobile();
@@ -50,13 +69,15 @@ export function ChartAreaInteractive({ data }: ChartAreaInteractiveProps) {
     return data;
   }, [data, timeRange]);
 
+  const palette = getPalette(filteredData[filteredData.length - 1]?.alertLevel ?? "GREEN");
+
   return (
     <Card>
       <CardHeader>
         <CardTitle>Flood Trend Window</CardTitle>
         <CardDescription>
           <span className="hidden @[540px]/card:block">
-            Water level, rainfall, and 3h risk across recent readings
+            Water level, rainfall, and 3h risk across recent date and time stamps
           </span>
           <span className="@[540px]/card:hidden">Flood trend window</span>
         </CardDescription>
@@ -83,25 +104,25 @@ export function ChartAreaInteractive({ data }: ChartAreaInteractiveProps) {
               <linearGradient id="fillWater" x1="0" y1="0" x2="0" y2="1">
                 <stop
                   offset="5%"
-                  stopColor="var(--color-waterLevelCm)"
-                  stopOpacity={0.45}
+                  stopColor={palette.water}
+                  stopOpacity={0.7}
                 />
                 <stop
                   offset="95%"
-                  stopColor="var(--color-waterLevelCm)"
-                  stopOpacity={0.05}
+                  stopColor={palette.water}
+                  stopOpacity={0.12}
                 />
               </linearGradient>
               <linearGradient id="fillRain" x1="0" y1="0" x2="0" y2="1">
                 <stop
                   offset="5%"
-                  stopColor="var(--color-rainfallMm)"
-                  stopOpacity={0.35}
+                  stopColor={palette.rain}
+                  stopOpacity={0.6}
                 />
                 <stop
                   offset="95%"
-                  stopColor="var(--color-rainfallMm)"
-                  stopOpacity={0.05}
+                  stopColor={palette.rain}
+                  stopOpacity={0.1}
                 />
               </linearGradient>
             </defs>
@@ -121,13 +142,15 @@ export function ChartAreaInteractive({ data }: ChartAreaInteractiveProps) {
               dataKey="waterLevelCm"
               type="natural"
               fill="url(#fillWater)"
-              stroke="var(--chart-1)"
+              stroke={palette.water}
+              strokeWidth={2.5}
             />
             <Area
               dataKey="rainfallMm"
               type="natural"
               fill="url(#fillRain)"
-              stroke="var(--chart-2)"
+              stroke={palette.rain}
+              strokeWidth={2.5}
             />
           </AreaChart>
         </ChartContainer>
